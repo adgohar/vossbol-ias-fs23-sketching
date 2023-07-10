@@ -103,6 +103,42 @@ function openSketch() {
       colorPalette.appendChild(colorSwatch);
     });
 
+    var changeSmallLine = document.createElement('div');
+    changeSmallLine.id = 'changeSmallLine';
+    changeSmallLine.style.position = 'fixed';
+    changeSmallLine.style.bottom = '10px';
+    changeSmallLine.style.right = '50px';
+    changeSmallLine.style.width = '10px';
+    changeSmallLine.style.height = '10px';
+    changeSmallLine.style.display = 'inline-block';
+    changeSmallLine.style.backgroundColor = 'black';
+    changeSmallLine.onclick =  () => {changeThickness(2);};
+    document.body.appendChild(changeSmallLine);
+
+    var changeMediumLine = document.createElement('div');
+    changeMediumLine.id = 'changeMediumLine';
+    changeMediumLine.style.position = 'fixed';
+    changeMediumLine.style.bottom = '10px';
+    changeMediumLine.style.right = '65px';
+    changeMediumLine.style.width = '15px';
+    changeMediumLine.style.height = '15px';
+    changeMediumLine.style.display = 'inline-block';
+    changeMediumLine.style.backgroundColor = 'black';
+    changeMediumLine.onclick =  () => {changeThickness(5);};
+    document.body.appendChild(changeMediumLine);
+
+    var changeLargeLine = document.createElement('div');
+    changeLargeLine.id = 'changeLargeLine';
+    changeLargeLine.style.position = 'fixed';
+    changeLargeLine.style.bottom = '10px';
+    changeLargeLine.style.right = '85px';
+    changeLargeLine.style.width = '20px';
+    changeLargeLine.style.height = '20px';
+    changeLargeLine.style.display = 'inline-block';
+    changeLargeLine.style.backgroundColor = 'black';
+    changeLargeLine.onclick =  () => {changeThickness(10);};
+    document.body.appendChild(changeLargeLine);
+
     var eraserSign = document.createElement('img');
     eraserSign.id = 'eraserSign';
     eraserSign.src = 'img/eraser.png';
@@ -116,6 +152,7 @@ function openSketch() {
     document.body.appendChild(eraserSign);
 
     var ctx = canvas.getContext('2d');
+    var currentWidth = 2;
     var strokeColor = '#000000';
     var isDrawing = false;
     var lastX = 0;
@@ -150,18 +187,23 @@ function openSketch() {
 
     function setStrokeColor(color) {
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = 2;
         strokeColor = color;
+    }
+
+    function changeThickness(x) {
+       ctx.lineWidth = x;
+       currentWidth = x;
     }
 
     function toggleEraser() {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.strokeStyle = "rgba(255,255,255,1)";
-        ctx.lineWidth = 30;
         isEraserEnabled = !isEraserEnabled;
         if (isEraserEnabled) {
+          ctx.lineWidth = 30;
           eraserSign.style.border = '1px solid red';
         } else {
+          ctx.lineWidth = currentWidth;
           eraserSign.style.border = '';
         }
       }
@@ -186,6 +228,18 @@ function closeSketch() {
   // Remove the eraser sign
   var eraserSign = document.getElementById('eraserSign');
   eraserSign.parentNode.removeChild(eraserSign);
+
+  //Remove the changeSmallLine Button
+  var changeSmallLine = document.getElementById('changeSmallLine');
+  changeSmallLine.parentNode.removeChild(changeSmallLine);
+
+  //Remove the changeMediumLine Button
+  var changeMediumLine = document.getElementById('changeMediumLine');
+  changeMediumLine.parentNode.removeChild(changeMediumLine);
+
+  //Remove the changeLargeLine Button
+  var changeLargeLine = document.getElementById('changeLargeLine');
+  changeLargeLine.parentNode.removeChild(changeLargeLine);
 }
 
 function menu_new_conversation() {
