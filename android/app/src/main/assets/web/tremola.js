@@ -62,6 +62,7 @@ function openSketch() {
     closeButton.onclick = closeSketch;
     document.body.appendChild(closeButton);
 
+    // Do the same with a submit button
     var submitButton = document.createElement('button');
     submitButton.id = 'btn:submitSketch';
     submitButton.innerHTML = 'Submit';
@@ -77,7 +78,7 @@ function openSketch() {
     submitButton.onclick = sendDrawing;
     document.body.appendChild(submitButton);
 
-
+    //Create a color Palette, add it only with setColorPaletteButton function
     var colorPalette = document.createElement('div');
     colorPalette.id = 'colorPalette';
     colorPalette.style.position = 'fixed';
@@ -85,6 +86,7 @@ function openSketch() {
     colorPalette.style.left = '45px';
     //document.body.appendChild(colorPalette);
 
+    //Color ring addition
     var colorChoiceButton = document.createElement('img');
     colorChoiceButton.id = 'colorChoiceButton';
     colorChoiceButton.src = 'img/color-wheel.png';
@@ -99,9 +101,10 @@ function openSketch() {
     colorChoiceButton.onclick = setColorPaletteButton;
     document.body.appendChild(colorChoiceButton);
 
+    //Array of colors we want to include
     var colors = ['#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
 
-    // Add color swatches to the color palette
+    // Add color buttons to the color palette
     colors.forEach(function(color) {
       var colorSwatch = document.createElement('div');
       colorSwatch.style.backgroundColor = color;
@@ -117,6 +120,7 @@ function openSketch() {
       colorPalette.appendChild(colorSwatch);
     });
 
+    //Create and style small thickness button
     var changeSmallLine = document.createElement('div');
     changeSmallLine.id = 'changeSmallLine';
     changeSmallLine.style.position = 'fixed';
@@ -129,6 +133,7 @@ function openSketch() {
     changeSmallLine.onclick =  () => {changeThickness(2);};
     document.body.appendChild(changeSmallLine);
 
+    //Do the same for medium thickness
     var changeMediumLine = document.createElement('div');
     changeMediumLine.id = 'changeMediumLine';
     changeMediumLine.style.position = 'fixed';
@@ -141,6 +146,7 @@ function openSketch() {
     changeMediumLine.onclick =  () => {changeThickness(5);};
     document.body.appendChild(changeMediumLine);
 
+    //Do the same for large thickness
     var changeLargeLine = document.createElement('div');
     changeLargeLine.id = 'changeLargeLine';
     changeLargeLine.style.position = 'fixed';
@@ -153,6 +159,7 @@ function openSketch() {
     changeLargeLine.onclick =  () => {changeThickness(10);};
     document.body.appendChild(changeLargeLine);
 
+    //Add an eraser
     var eraserSign = document.createElement('img');
     eraserSign.id = 'eraserSign';
     eraserSign.src = 'img/eraser.png';
@@ -165,6 +172,7 @@ function openSketch() {
     eraserSign.onclick = toggleEraser;
     document.body.appendChild(eraserSign);
 
+    //get the context of the canvas and set initial drawing settings
     var ctx = canvas.getContext('2d');
     var currentWidth = 2;
     var strokeColor = '#000000';
@@ -178,6 +186,7 @@ function openSketch() {
     canvas.addEventListener('touchend', endDrawing);
     canvas.addEventListener('touchcancel', endDrawing);
 
+    //Drawing function when user starts drawing (on touchstart)
     function startDrawing(e) {
         e.preventDefault();
         isDrawing = true;
@@ -185,6 +194,8 @@ function openSketch() {
         [lastX, lastY] = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
     }
 
+
+    //Function when users move their finger to continue drawing
     function draw(e) {
         if (!isDrawing) return;
         e.preventDefault();
@@ -196,15 +207,20 @@ function openSketch() {
         ctx.stroke();
         [lastX, lastY] = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
     }
+
+    //set isDrawing to false when users remove their finger
     function endDrawing() {
         isDrawing = false;
     }
 
+    //function to decide the drawing color, called by the color buttons above
     function setStrokeColor(color) {
         ctx.globalCompositeOperation = 'source-over';
         strokeColor = color;
     }
 
+    //function to either add or remove the color Palette depending on if  it exists
+    //Called when the color ring is clicked
     function setColorPaletteButton () {
         if (colChoice == true) {
             document.body.appendChild(colorPalette);
@@ -216,11 +232,13 @@ function openSketch() {
 
     }
 
+    //function to change thickness of the pinsel, called by the thickness buttons above
     function changeThickness(x) {
        ctx.lineWidth = x;
        currentWidth = x;
     }
 
+    //eraser function
     function toggleEraser() {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.strokeStyle = "rgba(255,255,255,1)";
@@ -235,6 +253,7 @@ function openSketch() {
       }
 }
 
+//function called by the close button to end the sketch
 function closeSketch() {
   // Remove the canvas element
   var canvas = document.getElementById('sketchCanvas');
@@ -506,6 +525,9 @@ function menu_pick_image() {
 
 // ---
 
+// mostly a copy of new_text_post
+//difference is the passed string being a data uri
+//and the compressing of the string done by the pako lbrary (pako.min.js)
 function new_drawing_post(s) {
     if (s.length == 0) {
         return;
@@ -621,9 +643,8 @@ function load_post_item(p) { // { 'key', 'from', 'when', 'body', 'to' (if group 
     var txt = ""
     if (p["body"] != null) {
       txt = escapeHTML(p["body"]).replace(/\n/g, "<br>\n");
-      if (txt.startsWith("data:image/png;base64")) {
+      if (txt.startsWith("data:image/png;base64")) { // check if the string is a data url
         var compressedBase64 = txt.split(',')[1];
-
         // We Convert the compressed data from a base64 string to a Uint8Array
         var compressedData = atob(compressedBase64)
           .split('')
@@ -634,20 +655,17 @@ function load_post_item(p) { // { 'key', 'from', 'when', 'body', 'to' (if group 
 
         // We to decompress the Uint8Array
         var decompressedData = pako.inflate(uint8Array);
-
         // We Convert the decompressed data back to a base64 string
         var decompressedBase64 = btoa(String.fromCharCode.apply(null, decompressedData));
-
         // We Create a new data URL with the decompressed data
         var decompressedDataURL = 'data:image/png;base64,' + decompressedBase64;
+        //display the data url as an image element
         box += "<img src='" + decompressedDataURL + "' alt='Drawing' style='width: 50vw;'>";
         txt = "";
-    }
+      }
 
       var re = /!\[.*?\]\((.*?)\)/g;
       txt = txt.replace(re, " &nbsp;<object type='image/jpeg' style='width: 95%; display: block; margin-left: auto; margin-right: auto; cursor: zoom-in;' data='http://appassets.androidplatform.net/blobs/$1' ondblclick='modal_img(this)'></object>&nbsp; ");
-      // txt = txt + " &nbsp;<object type='image/jpeg' width=95% data='http://appassets.androidplatform.net/blobs/25d444486ffb848ed0d4f1d15d9a165934a02403b66310bf5a56757fec170cd2.jpg'></object>&nbsp; (!)";
-      // console.log(txt);
     }
     if (p.voice != null)
         box += "<span style='color: red;'>&#x1f50a;</span>&nbsp;&nbsp;"

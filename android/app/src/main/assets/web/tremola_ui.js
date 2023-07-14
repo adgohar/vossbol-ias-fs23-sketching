@@ -236,6 +236,8 @@ function closeOverlay() {
     }
 }
 
+//function called by the drawing submit button
+//gets the data uri of the drawing in the canvas and sends it to new_drawing_post
 function sendDrawing() {
     var drawingUrl = document.getElementById("sketchCanvas").toDataURL("image/png");
     new_drawing_post(drawingUrl);
