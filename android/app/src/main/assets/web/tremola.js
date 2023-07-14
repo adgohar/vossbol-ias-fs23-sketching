@@ -82,8 +82,22 @@ function openSketch() {
     colorPalette.id = 'colorPalette';
     colorPalette.style.position = 'fixed';
     colorPalette.style.bottom = '10px';
-    colorPalette.style.left = '10px';
-    document.body.appendChild(colorPalette);
+    colorPalette.style.left = '45px';
+    //document.body.appendChild(colorPalette);
+
+    var colorChoiceButton = document.createElement('img');
+    colorChoiceButton.id = 'colorChoiceButton';
+    colorChoiceButton.src = 'img/color-wheel.png';
+    colorChoiceButton.style.position = 'fixed';
+    colorChoiceButton.style.bottom = '10px';
+    colorChoiceButton.style.borderRadius = '50%';
+    colorChoiceButton.style.left = '10px';
+    colorChoiceButton.style.width = '30px';
+    colorChoiceButton.style.height = '30px';
+    colorChoiceButton.style.display = 'inline-block';
+    colorChoiceButton.style.backgroundColor = 'red';
+    colorChoiceButton.onclick = setColorPaletteButton;
+    document.body.appendChild(colorChoiceButton);
 
     var colors = ['#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
 
@@ -157,6 +171,7 @@ function openSketch() {
     var isDrawing = false;
     var lastX = 0;
     var lastY = 0;
+    var colChoice = true;
 
     canvas.addEventListener('touchstart', startDrawing);
     canvas.addEventListener('touchmove', draw);
@@ -188,6 +203,17 @@ function openSketch() {
     function setStrokeColor(color) {
         ctx.globalCompositeOperation = 'source-over';
         strokeColor = color;
+    }
+
+    function setColorPaletteButton () {
+        if (colChoice == true) {
+            document.body.appendChild(colorPalette);
+            colChoice = false;
+        } else {
+            colorPalette.parentNode.removeChild(colorPalette);
+            colChoice = true;
+        }
+
     }
 
     function changeThickness(x) {
@@ -224,6 +250,10 @@ function closeSketch() {
   // Remove the color palette
   var colorPalette = document.getElementById('colorPalette');
   colorPalette.parentNode.removeChild(colorPalette);
+
+  // Remove the color Choice Button
+  var colorChoiceButton = document.getElementById('colorChoiceButton');
+  colorChoiceButton.parentNode.removeChild(colorChoiceButton);
 
   // Remove the eraser sign
   var eraserSign = document.getElementById('eraserSign');
