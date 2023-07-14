@@ -247,10 +247,6 @@ function closeSketch() {
   var submitButton = document.getElementById('btn:submitSketch');
   submitButton.parentNode.removeChild(submitButton);
 
-  // Remove the color palette
-  var colorPalette = document.getElementById('colorPalette');
-  colorPalette.parentNode.removeChild(colorPalette);
-
   // Remove the color Choice Button
   var colorChoiceButton = document.getElementById('colorChoiceButton');
   colorChoiceButton.parentNode.removeChild(colorChoiceButton);
@@ -270,6 +266,12 @@ function closeSketch() {
   //Remove the changeLargeLine Button
   var changeLargeLine = document.getElementById('changeLargeLine');
   changeLargeLine.parentNode.removeChild(changeLargeLine);
+
+  // Remove the color palette if it exists (is open)
+  var colorPalette = document.getElementById('colorPalette');
+  if (colorPalette) {
+    colorPalette.parentNode.removeChild(colorPalette);
+  }
 }
 
 function menu_new_conversation() {
